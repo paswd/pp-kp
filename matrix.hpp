@@ -31,35 +31,24 @@ private:
 	size_t Height;
 	size_t Width;
 
-	TNum **Values;
+	//TNum **Values;
+	std::vector <TNum> Data;
+	std::vector <size_t> Cols;
+	std::vector <size_t> NewRows;
+
+	bool ReadFromFile(std::ifstream &fin, bool show_imported_matrix);
 
 public:
-	TMatrix(void);
-	TMatrix(TMatrix *sample);
-	TMatrix(size_t h, size_t w);
-	TMatrix(std::vector <TNum> vect);
+	TMatrix(std::ifstream &fin, size_t height, size_t width);
 	~TMatrix(void);
-	void Init(TMatrix *sample, size_t h, size_t w);
 	void Clear(void);
-	void Get(void);
 	void Print(void);
 	TNum GetValue(size_t i, size_t j);
-	void SetValue(TNum value, size_t i, size_t j);
+	//void SetValue(TNum value, size_t i, size_t j);
 	size_t GetWidth(void);
 	size_t GetHeight(void);
-	void Resize(size_t h, size_t w);
 	bool IsNull(void);
-	bool ReadFromFile(std::ifstream &fin, bool show_imported_matrix);
-	void Transpose(void);
-	void SetUnit(size_t side);
-	bool IsDiag(void);
-	bool IsDiag(TNum accuracy);
-	void MultiplyNum(TNum num);
-	void Summ(TMatrix *matrix);
-	void Minus(void);
+	//void Minus(void);
 };
-
-TMatrix SubMatrix(TMatrix matrix, size_t i, size_t j, size_t h, size_t w);
-void MatrixComposition(TMatrix *m1, TMatrix *m2, TMatrix *res);
 
 #endif

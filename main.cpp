@@ -40,7 +40,6 @@ using namespace std;
 vector <TNum> BasicIterationFunc(TMatrix *matrix, vector <TNum> b);
 
 void BasicIterationSolve(string filename) {
-	TMatrix matrix;
 	ifstream fin(filename.c_str());
 	if (!fin.is_open()) {
         cout << "Ошибка чтения файла" << endl;
@@ -48,27 +47,24 @@ void BasicIterationSolve(string filename) {
 	}
 	size_t size = 0;
 	vector <TNum> b;
-	try {
-		bool readres = matrix.ReadFromFile(fin, true);
+	size_t height, width;
+	fin >> height >> width;
+	//bool readres = matrix.ReadFromFile(fin, height, width, true);
 
-		if (!readres) {
+	/*if (!readres) {
+		return;
+	}*/
+	TMatrix matrix(fin, height, width);
+
+	size = matrix.GetHeight();
+	b.resize(size);
+
+	for (size_t i = 0; i < size; i++) {
+		if (!(fin >> b[i])) {
 			throw 1;
 		}
-
-		size = matrix.GetHeight();
-		b.resize(size);
-
-		for (size_t i = 0; i < size; i++) {
-			if (!(fin >> b[i])) {
-				throw 1;
-			}
-		}
-
-	} catch (int a) {
-		fin.close();
-		cout << "Ошибка чтения из файла" << endl;
-		return;
 	}
+
 	cout << "Результирующий вектор успешно импортирован:" << endl;
 	for (size_t i = 0; i < size; i++) {
 		cout << b[i] << " ";
