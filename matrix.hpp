@@ -36,13 +36,14 @@ private:
 	std::vector <size_t> Cols;
 	std::vector <size_t> NewRows;
 
-	bool ReadFromFile(std::ifstream &fin, bool show_imported_matrix);
+	bool ReadFromFile(std::ifstream &fin, size_t begin, size_t origSize, bool show_imported_matrix);
 
 public:
-	TMatrix(std::ifstream &fin, size_t height, size_t width);
+	TMatrix(std::ifstream &fin, size_t begin, size_t origSize, size_t height, size_t width);
 	~TMatrix(void);
 	void Clear(void);
 	void Print(void);
+	void PrintBin(void);
 	TNum GetValue(size_t i, size_t j);
 	//void SetValue(TNum value, size_t i, size_t j);
 	size_t GetWidth(void);

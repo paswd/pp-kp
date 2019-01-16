@@ -1,5 +1,5 @@
 FLAGS=-pedantic -Wall -Werror -Wno-sign-compare -Wno-long-long -lm -std=c++11 -O2
-COMPILLER=g++
+COMPILLER=mpicxx
 
 all: start
 
