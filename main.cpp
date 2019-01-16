@@ -55,8 +55,6 @@ private:
 	TNum *LayerBuffer;
 
 	size_t getLayersOnMachine(size_t machineId) {
-		//cout << ActiveMachinesCnt << endl;
-		//cout << "ActiveMach: " << ActiveMachinesCnt << endl;
 		if (machineId >= ActiveMachinesCnt) {
 			return 0.;
 		}
@@ -73,8 +71,6 @@ private:
 	}
 
 	vector <TNum> Func(TMatrix *matrix, vector <TNum> b) {
-		//cout << "ActiveMach: " << ActiveMachinesCnt << endl;
-		//size_t size = b.size();
 		vector <TNum> x(Height, 1);
 		size_t n = 0;
 		vector <TNum> e(LayersOnMachine);
@@ -82,17 +78,12 @@ private:
 		bool is_set_first = true;
 
 		size_t iter = 0;
-		//size_t begin = MachineId * LayersOnMachine;
 		size_t begin = 0;
-		//cout << MachineId << "::" << getLayersOnMachine(MachineId) << endl;
+		
 		for (size_t i = 0; i < MachineId; i++) {
 			begin += getLayersOnMachine(i);
 		}
-		/*if (MachineId == 1) {
-			cout << "begin = " << begin << endl;
-		}*/
-		//cout << "Curr = " << matrix->GetValue(1, 1) << endl;
-		//matrix->PrintBin();
+
 		while (true) {
 			iter++;
 			if (is_set_first) {
@@ -148,7 +139,7 @@ private:
 				break;
 			}
 		}
-		//cout << "Число итераций: " << iter << endl;
+
 		if (MachineId == 0) {
 			cout << "=============" << endl << endl;
 			cout << "Число итераций:" << endl;
@@ -178,9 +169,11 @@ private:
 		}
 	}
 	void arrClear() {
-		//delete [] ValBuffer;
+		delete [] ValBuffer;
 		//delete [] ValBufferCounts;
 		//delete [] ValBufferDispls;
+
+		delete [] LayerBuffer;
 	}
 
 public:
@@ -226,7 +219,6 @@ public:
 			}
 			MPI_Barrier(MPI_COMM_WORLD);
 		}
-		//matrix.Print();
 
 		b.resize(0);
 		for (size_t i = 0; i < Height; i++) {

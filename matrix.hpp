@@ -31,7 +31,6 @@ private:
 	size_t Height;
 	size_t Width;
 
-	//TNum **Values;
 	std::vector <TNum> Data;
 	std::vector <size_t> Cols;
 	std::vector <size_t> NewRows;
@@ -43,13 +42,11 @@ public:
 	~TMatrix(void);
 	void Clear(void);
 	void Print(void);
-	void PrintBin(void);
+	void PrintDirect(void);
 	TNum GetValue(size_t i, size_t j);
-	//void SetValue(TNum value, size_t i, size_t j);
 	size_t GetWidth(void);
 	size_t GetHeight(void);
 	bool IsNull(void);
-	//void Minus(void);
 };
 
 #endif

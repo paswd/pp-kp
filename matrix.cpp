@@ -49,7 +49,7 @@ void TMatrix::Print(void) {
 		cout << endl;
 	}
 }
-void TMatrix::PrintBin(void) {
+void TMatrix::PrintDirect(void) {
 	for (size_t i = 0; i < Data.size(); i++) {
 		cout << Data[i] << " ";
 	}
@@ -142,8 +142,6 @@ bool TMatrix::ReadFromFile(ifstream &fin, size_t begin, size_t origSize, bool sh
 	if (show_imported_matrix) {
 		cout << ":" << endl;
 		Print();
-	} else {
-		//cout << endl;
 	}
 	return true;
 }
