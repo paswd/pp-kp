@@ -82,7 +82,15 @@ private:
 		bool is_set_first = true;
 
 		size_t iter = 0;
-		size_t begin = MachineId * LayersOnMachine;
+		//size_t begin = MachineId * LayersOnMachine;
+		size_t begin = 0;
+		cout << MachineId << "::" << getLayersOnMachine(MachineId) << endl;
+		for (size_t i = 0; i < MachineId; i++) {
+			begin += getLayersOnMachine(i);
+		}
+		if (MachineId == 1) {
+			cout << "begin = " << begin << endl;
+		}
 		//cout << "Curr = " << matrix->GetValue(1, 1) << endl;
 		//matrix->PrintBin();
 		while (true) {
@@ -108,7 +116,11 @@ private:
 				d[i] = e[i] / matrix->GetValue(i, i + begin);
 				xn[i] = x[i + begin] - d[i];
 				if (MachineId == 1) {
+					cout << "~~~~~" << endl;
+					matrix->Print();
+					cout << "~~~~~" << endl;
 					cout << "i = " << i << endl;
+					cout << "i + begin = " << i + begin << endl;
 					cout << "M[i][i + begin] = " << matrix->GetValue(i, i + begin) << endl;
 					cout << "e[i] = " << e[i] << endl;
 					cout << "d[i] = " << d[i] << endl;
@@ -248,7 +260,10 @@ public:
 		arrInit();
 		
 		LayersOnMachine = getLayersOnMachine(MachineId);
-		size_t begin = LayersOnMachine * MachineId;
+		size_t begin = 0;
+		for (size_t i = 0; i < MachineId; i++) {
+			begin += getLayersOnMachine(i);
+		}
 		//cout << "TEST1" << endl;
 		//cout << begin << ":" << LayersOnMachine << endl;
 		//cout << Width << ":" << Height << endl;
