@@ -84,13 +84,13 @@ private:
 		size_t iter = 0;
 		//size_t begin = MachineId * LayersOnMachine;
 		size_t begin = 0;
-		cout << MachineId << "::" << getLayersOnMachine(MachineId) << endl;
+		//cout << MachineId << "::" << getLayersOnMachine(MachineId) << endl;
 		for (size_t i = 0; i < MachineId; i++) {
 			begin += getLayersOnMachine(i);
 		}
-		if (MachineId == 1) {
+		/*if (MachineId == 1) {
 			cout << "begin = " << begin << endl;
-		}
+		}*/
 		//cout << "Curr = " << matrix->GetValue(1, 1) << endl;
 		//matrix->PrintBin();
 		while (true) {
@@ -104,95 +104,35 @@ private:
 				e[i] = 0.;
 				for (size_t j = 0; j < Width; j++) {
 					e[i] += matrix->GetValue(i, j) * x[j];
-					/*if (MachineId == 0 && i < 2) {
-						cout << "* i, j = " << i << " " << j << endl;
-						cout << "* e[i] = " << e[i] << endl;
-						cout << "* M[i][j] = " << matrix->GetValue(i, j) << endl;
-						cout << "* x[j] = " << x[j] << endl;
-					}*/
 
 				}
 				e[i] -= b[i];
 				d[i] = e[i] / matrix->GetValue(i, i + begin);
 				xn[i] = x[i + begin] - d[i];
-				if (MachineId == 1) {
-					cout << "~~~~~" << endl;
-					matrix->Print();
-					cout << "~~~~~" << endl;
-					cout << "i = " << i << endl;
-					cout << "i + begin = " << i + begin << endl;
-					cout << "M[i][i + begin] = " << matrix->GetValue(i, i + begin) << endl;
-					cout << "e[i] = " << e[i] << endl;
-					cout << "d[i] = " << d[i] << endl;
-					cout << "xn[i] = " << xn[i] << endl;
-					cout << "x[i + begin] = " << x[i + begin] << endl;
-				}
 
 			}
 			n++;
 			if (n <= LayersOnMachine) {
 				is_set_first = false;
 				continue;
-			}/*
-			Это должно быть заменено
-			for (size_t i = 0; i < LayersOnMachine; i++) {
-				x[i] = xn[i];
 			}
-			*/
-			//TNum * = new TNum[d.size()];
+
 			for (size_t i = 0; i < LayersOnMachine; i++) {
 				LayerBuffer[i] = xn[i];
 			}
-			/*if (MachineId == 1) {
-				for (size_t i = 0; i < LayersOnMachine; i++) {
-					cout << xn[i] << " ";
-				}
-				cout << endl;
-			}*/
+
 			MPI_Allgatherv(LayerBuffer, LayersOnMachine, MPI_DOUBLE, ValBuffer, ValBufferCounts, ValBufferDispls,
 				MPI_DOUBLE, MPI_COMM_WORLD);
 			for (size_t i = 0; i < Height; i++) {
 				x[i] = ValBuffer[i];
 			}
-			if (MachineId == 0) {
-				for (size_t i = 0; i < Height; i++) {
-					cout << x[i] << " ";
-				}
-				cout << endl;
-			}
-			
-			//cout << "dc" << endl;
-			/*if (MachineId == 0) {
-				cout << "TEST: ";
-			}*/
+
 			for (size_t i = 0; i < LayersOnMachine; i++) {
 				LayerBuffer[i] = d[i];
-				/*if (MachineId == 0) {
-					cout << d[i] << " ";
-				}*/
 			}
-			/*if (MachineId == 0) {
-				cout << endl;
-			}*/
-			/*cout << endl;
-			cout << "cnts" << endl;
-			//Allgather
-			for (size_t i = 0; i < MachinesCnt; i++) {
-				cout << ValBufferCounts[i] << " ";
-			}
-			cout << endl;
-			cout << "dspls" << endl;
-			for (size_t i = 0; i < MachinesCnt; i++) {
-				cout << ValBufferDispls[i] << " ";
-			}
-			cout << endl;*/
+			
 			MPI_Allgatherv(LayerBuffer, LayersOnMachine, MPI_DOUBLE, ValBuffer, ValBufferCounts, ValBufferDispls,
 				MPI_DOUBLE, MPI_COMM_WORLD);
-			for (size_t i = 0; i < Height; i++) {
-				//cout << ValBuffer[i] << " ";
-			}
-			//cout << endl;
-			//delete [] dc;
 
 			TNum max_d = 0;
 			bool max_empty = true;
@@ -208,7 +148,18 @@ private:
 				break;
 			}
 		}
-		cout << "Число итераций: " << iter << endl;
+		//cout << "Число итераций: " << iter << endl;
+		if (MachineId == 0) {
+			cout << "=============" << endl << endl;
+			cout << "Число итераций:" << endl;
+		}
+		MPI_Barrier(MPI_COMM_WORLD);
+		for (size_t mach = 0; mach < MachinesCnt; mach++) {
+			if (mach == MachineId) {
+				cout << "Core #" << MachineId << ": " << iter << endl;
+			}
+			MPI_Barrier(MPI_COMM_WORLD);
+		}
 		return x;
 	}
 	void arrInit() {
@@ -220,10 +171,7 @@ private:
 		size_t currentDispl = 0;
 
 		for (size_t i = 0; i < MachinesCnt; i++) {
-			//cout << "ActiveMach: " << ActiveMachinesCnt << endl;
 			size_t currentLayersCnt = getLayersOnMachine(i);
-			//cout << "CurrLayersCnt" << endl;
-			//cout << currentLayersCnt << endl;
 			ValBufferCounts[i] = currentLayersCnt;
 			ValBufferDispls[i] = currentDispl;
 			currentDispl += currentLayersCnt;
@@ -237,10 +185,7 @@ private:
 
 public:
 	BasicIterationCluster(size_t machinesCnt, size_t machineId) {
-		//initDefaultVars();
-		//getDataFromFile(filename);
 		setMainClusterParams(machinesCnt, machineId);
-		//arrInit();
 	}
 	~BasicIterationCluster(void) {
 		arrClear();
@@ -252,9 +197,7 @@ public:
 		       cout << "Ошибка чтения файла" << endl;
 		       return;
 		}
-		//size_t size = 0;
 		vector <TNum> b;
-		//size_t height, width;
 		fin >> Height >> Width;
 		ActiveMachinesCnt = min(Height, MachinesCnt);
 		arrInit();
@@ -264,14 +207,26 @@ public:
 		for (size_t i = 0; i < MachineId; i++) {
 			begin += getLayersOnMachine(i);
 		}
-		//cout << "TEST1" << endl;
-		//cout << begin << ":" << LayersOnMachine << endl;
-		//cout << Width << ":" << Height << endl;
-		TMatrix matrix(fin, begin, Height, LayersOnMachine, Width);
-		//cout << "TEST2" << endl;z
 
-		matrix.Print();
-		//cout << "TEST3" << endl;
+		TMatrix matrix(fin, begin, Height, LayersOnMachine, Width);
+
+		if (MachineId == 0) {
+			cout << "Полученные данные:" << endl;
+		}
+		MPI_Barrier(MPI_COMM_WORLD);
+		for (size_t mach = 0; mach < MachinesCnt; mach++) {
+			if (mach == MachineId) {
+				if (mach == 0) {
+					cout << "Матрица:" << endl;
+				}
+				matrix.Print();
+				if (mach == MachinesCnt - 1) {
+					cout << "_____________" << endl << endl;
+				}
+			}
+			MPI_Barrier(MPI_COMM_WORLD);
+		}
+		//matrix.Print();
 
 		b.resize(0);
 		for (size_t i = 0; i < Height; i++) {
@@ -284,16 +239,26 @@ public:
 			}
 			b.push_back(tmp);
 		}
-		for (size_t i = 0; i < LayersOnMachine; i++) {
-			cout << b[i] << " ";
+		for (size_t mach = 0; mach < MachinesCnt; mach++) {
+			if (mach == MachineId) {
+				if (mach == 0) {
+					cout << "Свободный член:" << endl;
+				}
+				for (size_t i = 0; i < LayersOnMachine; i++) {
+					cout << b[i] << endl;
+				}
+			}
+			MPI_Barrier(MPI_COMM_WORLD);
 		}
-		cout << endl;
 		fin.close();
 		
 		vector <TNum> x = Func(&matrix, b);
-		cout << "Решение:" << endl;
-		for (size_t i = 0; i < Height; i++) {
-			cout << "X" << i + 1 << " = " << x[i] << endl;
+		if (MachineId == 0) {
+			cout << "_____________" << endl << endl;
+			cout << "Полученный ответ:" << endl;
+			for (size_t i = 0; i < Height; i++) {
+				cout << "X[" << i + 1 << "] = " << x[i] << endl;
+			}
 		}
 	}
 
@@ -310,7 +275,6 @@ int main(int argc, char** argv) {
 	BasicIterationCluster cluster(machinesCnt, machineId);
 	cluster.Solve(filename);
 
-	cout << "TEST" << endl;
 	MPI_Finalize();
 
 	return 0;

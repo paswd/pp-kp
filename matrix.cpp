@@ -83,15 +83,6 @@ TNum TMatrix::GetValue(size_t i, size_t j) {
 	return res;
 }
 
-/*void TMatrix::SetValue(TNum value, size_t i, size_t j) {
-	if (i >= this->Height || j >= this->Width) {
-		return;
-	}
-	TNum curr = GetValue(i, j);
-	if (curr == 0. && value == 0.) {
-		break;
-	}
-}*/
 size_t TMatrix::GetWidth(void) {
 	return this->Width;
 }
@@ -107,12 +98,6 @@ bool TMatrix::IsNull(void) {
 }
 
 bool TMatrix::ReadFromFile(ifstream &fin, size_t begin, size_t origSize, bool show_imported_matrix) {
-	//cout << "Чтение из файла..." << endl;
-	/*ifstream fin(filename.c_str());
-	if (!fin.is_open()) {
-        cout << "Ошибка чтения файла" << endl;
-        return false;
-	}*/
 	Data.resize(0);
 	Cols.resize(0);
 	NewRows.resize(0);
@@ -126,9 +111,8 @@ bool TMatrix::ReadFromFile(ifstream &fin, size_t begin, size_t origSize, bool sh
 				if (!(fin >> tmp)) {
 					throw 2;
 				}
-				//cout << i << ":" << j << " = " << tmp << endl;
+
 				if (i < begin || i >= begin + Height) {
-					//cout << "cont" << endl;
 					newRow = false;
 					continue;
 				}
@@ -138,7 +122,6 @@ bool TMatrix::ReadFromFile(ifstream &fin, size_t begin, size_t origSize, bool sh
 					Cols.push_back(j);
 					if (newRow) {
 						newRow = false;
-						//cout << "repeats" << repeats << endl;
 						for (size_t k = 0; k < repeats; k++) {
 							NewRows.push_back(currPos);
 						}
@@ -150,34 +133,12 @@ bool TMatrix::ReadFromFile(ifstream &fin, size_t begin, size_t origSize, bool sh
 				repeats++;
 			}
 		}
-		/*for (size_t i = 0; i < Data.size(); i++) {
-			cout << Data[i] << " ";
-		}
-		cout << endl;
-		for (size_t i = 0; i < Cols.size(); i++) {
-			cout << Cols[i] << " ";
-		}
-		cout << endl;
-		for (size_t i = 0; i < NewRows.size(); i++) {
-			cout << NewRows[i] << " ";
-		}
-
-		cout << endl;
-		Print();*/
 		NewRows.push_back(Data.size());
-		//throw 0;
 
 	} catch (int a) {
-		//if (a != 0) {
-		//delete tmp_matrix;
 		cout << "Ошибка чтения из файла" << endl;
 		return false;
-		//}
 	}
-	//fin.close();
-	//this->Init(tmp_matrix, tmp_matrix->GetHeight(), tmp_matrix->GetWidth());
-	//delete tmp_matrix;
-	//cout << "Матрица успешно импортирована";
 	if (show_imported_matrix) {
 		cout << ":" << endl;
 		Print();
@@ -186,12 +147,3 @@ bool TMatrix::ReadFromFile(ifstream &fin, size_t begin, size_t origSize, bool sh
 	}
 	return true;
 }
-
-
-/*void TMatrix::Minus(void) {
-	for (size_t i = 0; i < this->Height; i++) {
-		for (size_t j = 0; j < this->Width; j++) {
-			this->SetValue(-this->GetValue(i, j), i, j);
-		}
-	}
-}*/
